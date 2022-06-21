@@ -22,7 +22,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 
 public class WebViewActivity extends AppCompatActivity {
 
@@ -86,7 +85,6 @@ public class WebViewActivity extends AppCompatActivity {
         jsonObject.put("phone_number", phoneNumber);
         jsonObject.put("email", email);
 
-        Log.d("1", jsonObject.toString());
         return jsonObject;
     }
 
@@ -105,7 +103,7 @@ public class WebViewActivity extends AppCompatActivity {
         catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        Log.d("1", encodedURI);
+
         return encodedURI;
     }
 
