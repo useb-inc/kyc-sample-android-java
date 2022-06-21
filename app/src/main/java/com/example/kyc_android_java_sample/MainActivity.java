@@ -2,6 +2,7 @@ package com.example.kyc_android_java_sample;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         String monthStr = binding.month.getText().toString();
         String dayStr = binding.day.getText().toString();
         String birthday;
-        if(yearStr == "" || monthStr == "" || dayStr == "")
+        if(yearStr.length() == 0 || monthStr.length() == 0 || dayStr.length() == 0)
             birthday = "";
         else
             birthday = yearStr + "-" + monthStr + "-" + dayStr;

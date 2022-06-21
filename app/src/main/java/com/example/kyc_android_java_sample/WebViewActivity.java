@@ -23,7 +23,6 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Optional;
 
 public class WebViewActivity extends AppCompatActivity {
 
@@ -37,61 +36,25 @@ public class WebViewActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view);
+        String url = "https://kyc.useb.co.kr/auth";
+
+        // 바인딩 설정
         binding = ActivityWebViewBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        String url = "https://kyc.useb.co.kr/auth";
-
+        // 웹뷰 설정
         webview = binding.webview;
         webview.getSettings().setJavaScriptEnabled(true);
         webview.setWebViewClient(new WebViewClient());
         webview.setWebChromeClient(new WebChromeClient());
         webview.addJavascriptInterface(new WebBridge(),"alcherakyc");
 
-        String encodedJson = null;
-        try {
-            encodedJson = URLEncoder.encode(getData().toString(), StandardCharsets.UTF_8.name());
-        } catch (UnsupportedEncodingException | JSONException e) {
-            e.printStackTrace();
-        }
-        encodeURIComponent(encodedJson);
-        String encodedData = getBase64encode(encodedJson);
+        // 사용자 데이터 인코딩
+        String userInfo = null;
+        String encodedUserInfo = encodeJson(userInfo);
 
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-
-                webview.loadUrl(url);
-                webview.setWebViewClient(new WebViewClient(){
-                    @Override
-                    public void onPageFinished(WebView view, String url){
-
-                        webview.loadUrl("javascript:alcherakycreceive('" + encodedData +"')");
-                        int cameraPermissionCheck = ContextCompat.checkSelfPermission(WebViewActivity.this, Manifest.permission.CAMERA);
-                        if (cameraPermissionCheck != PackageManager.PERMISSION_GRANTED) { // 권한이 없는 경우
-                            ActivityCompat.requestPermissions(WebViewActivity.this, new String[]{Manifest.permission.CAMERA}, 1000);
-                        }else { // 권한이 있는 경우
-                            int REQUEST_IMAGE_CAPTURE = 1;
-                            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                            }
-                        }
-                    }
-                });
-            }
-        });
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 1000) {
-            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(WebViewActivity.this, "카메라/갤러리 접근 권한이 없습니다. 권한 허용 후 이용해주세요. no access permission for camera and gallery.", Toast.LENGTH_SHORT).show();
-            }
-        }
+        // POST
+        postUserInfo(url, encodedUserInfo);
     }
 
     @Override
@@ -123,6 +86,7 @@ public class WebViewActivity extends AppCompatActivity {
         jsonObject.put("phone_number", phoneNumber);
         jsonObject.put("email", email);
 
+        Log.d("1", jsonObject.toString());
         return jsonObject;
     }
 
@@ -139,13 +103,68 @@ public class WebViewActivity extends AppCompatActivity {
                     .replaceAll("\\%7E", "~");
         }
         catch (UnsupportedEncodingException e) {
-            encodedURI = encoded;
+            e.printStackTrace();
         }
+        Log.d("1", encodedURI);
         return encodedURI;
     }
 
-    private String getBase64encode(String content){
+    private String encodeJson(String data){
 
-        return Base64.encodeToString(content.getBytes(), 0);
+        String encodedData = null;
+        try {
+            data = URLEncoder.encode(getData().toString(), StandardCharsets.UTF_8.name());
+        data = encodeURIComponent(data);
+        encodedData = Base64.encodeToString(data.getBytes(), 0);
+        } catch (UnsupportedEncodingException | JSONException e) {
+            e.printStackTrace();
+        }
+        return encodedData;
+    }
+
+    private void postUserInfo(String url, String encodedUserInfo){
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+
+                webview.loadUrl(url);
+                webview.setWebViewClient(new WebViewClient(){
+                    @Override
+                    public void onPageFinished(WebView view, String url){
+
+                        webview.loadUrl("javascript:alcherakycreceive('" + encodedUserInfo +"')");
+
+                        // 카메라 권한 요청
+                        cameraAuthRequest();
+                    }
+                });
+            }
+        });
+    }
+
+    private void cameraAuthRequest(){
+
+        int cameraPermissionCheck = ContextCompat.checkSelfPermission(WebViewActivity.this, Manifest.permission.CAMERA);
+        if (cameraPermissionCheck != PackageManager.PERMISSION_GRANTED) { // 권한이 없는 경우
+            ActivityCompat.requestPermissions(WebViewActivity.this, new String[]{Manifest.permission.CAMERA}, 1000);
+        }else { // 권한이 있는 경우
+            int REQUEST_IMAGE_CAPTURE = 1;
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1000) {
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(WebViewActivity.this, "카메라/갤러리 접근 권한이 없습니다. 권한 허용 후 이용해주세요. no access permission for camera and gallery.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
