@@ -113,10 +113,9 @@ public class WebViewActivity extends AppCompatActivity {
 
         String encodedData = null;
         try {
-            data = URLEncoder.encode(getData().toString(), StandardCharsets.UTF_8.name());
-        data = encodeURIComponent(data);
-        encodedData = Base64.encodeToString(data.getBytes(), 0);
-        } catch (UnsupportedEncodingException | JSONException e) {
+            data = encodeURIComponent(getData().toString());
+            encodedData = Base64.encodeToString(data.getBytes(), 0);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return encodedData;
