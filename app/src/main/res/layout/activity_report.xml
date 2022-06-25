@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:viewBindingIgnore="true"
+    tools:context=".ReportActivity">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="300px" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="38px"
+            android:layout_marginLeft="150px"
+            android:text="이벤트"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/event"
+            android:textColor="@color/black"
+            android:background="@drawable/edge"
+            android:layout_marginLeft="150px"
+            android:layout_marginRight="150px"
+            android:layout_marginTop="10px"
+            android:paddingLeft="50px"
+            android:paddingRight="50px"
+            android:paddingTop="50px"
+            android:paddingBottom="50px"
+            android:textSize="38px"
+            android:text=""/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="400px" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="38px"
+            android:textColor="@color/black"
+            android:layout_marginLeft="150px"
+            android:text="상세 결과"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/result"
+            android:textColor="@color/black"
+            android:textSize="38px"
+            android:layout_marginLeft="150px"
+            android:layout_marginRight="150px"
+            android:layout_marginTop="10px"
+            android:paddingLeft="50px"
+            android:paddingRight="50px"
+            android:paddingTop="50px"
+            android:paddingBottom="50px"
+            android:background="@drawable/edge"
+            android:text=""/>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

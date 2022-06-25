@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -21,14 +22,16 @@ import com.example.kyc_android_java_sample.databinding.ActivityWebViewBinding;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 public class WebViewActivity extends AppCompatActivity {
 
-    private String TAG2 = "WebViewActivity";
     private ActivityWebViewBinding binding;
     private WebView webview = null;
     private Handler handler = new Handler();
+    String result = "";
+    String event = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +49,7 @@ public class WebViewActivity extends AppCompatActivity {
         webview.getSettings().setJavaScriptEnabled(true);
         webview.setWebViewClient(new WebViewClient());
         webview.setWebChromeClient(new WebChromeClient());
-        webview.addJavascriptInterface(new WebBridge(),"alcherakyc");
+        webview.addJavascriptInterface(this,"alcherakyc");
 
         // 사용자 데이터 인코딩
         String userInfo = null;
@@ -56,13 +59,16 @@ public class WebViewActivity extends AppCompatActivity {
         postUserInfo(url, encodedUserInfo);
     }
 
+    // webview가 닫히면 result를 보여주는 화면으로 전환
     @Override
-    public void onBackPressed(){
+    public void onStop() {
 
-        if(webview.canGoBack())
-            webview.goBack();
-        else
-            finish();
+        super.onStop();
+
+        Intent intent = new Intent(getApplicationContext(), ReportActivity.class);
+        intent.putExtra("event", event);
+        intent.putExtra("result", result);
+        startActivity(intent);
     }
 
     private JSONObject getData() throws JSONException {
@@ -163,5 +169,52 @@ public class WebViewActivity extends AppCompatActivity {
                 Toast.makeText(WebViewActivity.this, "카메라/갤러리 접근 권한이 없습니다. 권한 허용 후 이용해주세요. no access permission for camera and gallery.", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @JavascriptInterface
+    public void receive(String data) throws UnsupportedEncodingException {
+
+        String success = "{\"result\": \"success\"}";
+        String failed = "{\"result\": \"failed\"}";
+        String complete = "{\"result\": \"complete\"}";
+        String close = "{\"result\": \"close\"}";
+
+        String decodedData = decodedReceiveData(data);
+        if (decodedData == success) {
+            event = success;
+            result = "KYC 작업이 성공했습니다.";
+            Log.d("success", "KYC 작업이 성공했습니다.");
+        }
+        else if (decodedData == failed) {
+            event = failed;
+            result = "KYC 작업이 실패했습니다.";
+            Log.d("failed", "KYC 작업이 실패했습니다.");
+        }
+        else if (decodedData == complete) {
+            event = complete;
+            result = "KYC가 완료되었습니다.";
+            Log.d("complete", "KYC가 완료되었습니다.");
+        }
+        else if (decodedData == close) {
+            event = close;
+            result = "KYC가 완료되지 않았습니다.";
+            Log.d("close", "KYC가 완료되지 않았습니다.");
+        }
+        else {
+            result = "KYC 응답 메세지 분석에 실패했습니다.";
+            Log.d("decoding failed", "KYC 응답 메세지 분석에 실패했습니다.");
+        }
+
+        try {
+            webview.loadUrl("javascript:self.close();");
+        } catch (Exception e) {
+            finish();
+        }
+    }
+
+    private String decodedReceiveData(String data) throws UnsupportedEncodingException {
+
+        String decoded = Base64.encodeToString(data.getBytes(), 0);
+        return URLDecoder.decode(decoded, "UTF-8");
     }
 }
