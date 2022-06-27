@@ -3,13 +3,15 @@ package com.example.kyc_android_java_sample;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
+import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
@@ -65,10 +67,12 @@ public class WebViewActivity extends AppCompatActivity {
 
         super.onStop();
 
-        Intent intent = new Intent(getApplicationContext(), ReportActivity.class);
-        intent.putExtra("event", event);
-        intent.putExtra("result", result);
-        startActivity(intent);
+        if(result != "") {
+            Intent intent = new Intent(getApplicationContext(), ReportActivity.class);
+            intent.putExtra("event", event);
+            intent.putExtra("result", result);
+            startActivity(intent);
+        }
     }
 
     private JSONObject getData() throws JSONException {
@@ -131,15 +135,14 @@ public class WebViewActivity extends AppCompatActivity {
             @Override
             public void run() {
 
+                // 카메라 권한 요청
+                cameraAuthRequest();
                 webview.loadUrl(url);
                 webview.setWebViewClient(new WebViewClient(){
                     @Override
                     public void onPageFinished(WebView view, String url){
 
                         webview.loadUrl("javascript:alcherakycreceive('" + encodedUserInfo +"')");
-
-                        // 카메라 권한 요청
-                        cameraAuthRequest();
                     }
                 });
             }
@@ -148,15 +151,29 @@ public class WebViewActivity extends AppCompatActivity {
 
     private void cameraAuthRequest(){
 
+        webview = binding.webview;
+        WebSettings ws = webview.getSettings();
+        ws.setMediaPlaybackRequiresUserGesture(false);
+
+        webview.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onPermissionRequest(final PermissionRequest request) {
+
+                //API레벨이 21이상인 경우
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    final String[] requestedResources = request.getResources();
+                    for (String r : requestedResources) {
+                        if (r.equals(PermissionRequest.RESOURCE_VIDEO_CAPTURE)) {
+                            request.grant(new String[]{PermissionRequest.RESOURCE_VIDEO_CAPTURE});
+                            break;
+                        }
+                    }
+                }
+            }
+        });
         int cameraPermissionCheck = ContextCompat.checkSelfPermission(WebViewActivity.this, Manifest.permission.CAMERA);
         if (cameraPermissionCheck != PackageManager.PERMISSION_GRANTED) { // 권한이 없는 경우
             ActivityCompat.requestPermissions(WebViewActivity.this, new String[]{Manifest.permission.CAMERA}, 1000);
-        }else { // 권한이 있는 경우
-            int REQUEST_IMAGE_CAPTURE = 1;
-            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-            }
         }
     }
 
@@ -167,6 +184,7 @@ public class WebViewActivity extends AppCompatActivity {
         if (requestCode == 1000) {
             if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(WebViewActivity.this, "카메라/갤러리 접근 권한이 없습니다. 권한 허용 후 이용해주세요. no access permission for camera and gallery.", Toast.LENGTH_SHORT).show();
+                finish();
             }
         }
     }
