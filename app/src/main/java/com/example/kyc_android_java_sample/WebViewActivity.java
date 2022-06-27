@@ -75,6 +75,26 @@ public class WebViewActivity extends AppCompatActivity {
         }
     }
 
+    private void postUserInfo(String url, String encodedUserInfo){
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+
+                // 카메라 권한 요청
+                cameraAuthRequest();
+                webview.loadUrl(url);
+                webview.setWebViewClient(new WebViewClient(){
+                    @Override
+                    public void onPageFinished(WebView view, String url){
+
+                        webview.loadUrl("javascript:alcherakycreceive('" + encodedUserInfo +"')");
+                    }
+                });
+            }
+        });
+    }
+
     private JSONObject getData() throws JSONException {
 
         String birthday = getIntent().getStringExtra("birthday");
@@ -129,24 +149,69 @@ public class WebViewActivity extends AppCompatActivity {
         return encodedData;
     }
 
-    private void postUserInfo(String url, String encodedUserInfo){
+    @JavascriptInterface
+    public void receive(String data) {
 
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
+        String success = "{\"result\": \"success\"}";
+        String failed = "{\"result\": \"failed\"}";
+        String complete = "{\"result\": \"complete\"}";
+        String close = "{\"result\": \"close\"}";
 
-                // 카메라 권한 요청
-                cameraAuthRequest();
-                webview.loadUrl(url);
-                webview.setWebViewClient(new WebViewClient(){
-                    @Override
-                    public void onPageFinished(WebView view, String url){
+        String decodedData = decodedReceiveData(data);
+        if (decodedData == success) {
+            event = success;
+            result = "KYC 작업이 성공했습니다.";
+            Log.d("success", "KYC 작업이 성공했습니다.");
+        }
+        else if (decodedData == failed) {
+            event = failed;
+            result = "KYC 작업이 실패했습니다.";
+            Log.d("failed", "KYC 작업이 실패했습니다.");
+        }
+        else if (decodedData == complete) {
+            event = complete;
+            result = "KYC가 완료되었습니다.";
+            Log.d("complete", "KYC가 완료되었습니다.");
+        }
+        else if (decodedData == close) {
+            event = close;
+            result = "KYC가 완료되지 않았습니다.";
+            Log.d("close", "KYC가 완료되지 않았습니다.");
+        }
+        else {
+            result = "KYC 응답 메세지 분석에 실패했습니다.";
+            Log.d("decoding failed", "KYC 응답 메세지 분석에 실패했습니다.");
+        }
 
-                        webview.loadUrl("javascript:alcherakycreceive('" + encodedUserInfo +"')");
-                    }
-                });
-            }
-        });
+        try {
+            webview.loadUrl("javascript:self.close();");
+        } catch (Exception e) {
+            finish();
+        }
+    }
+
+    private String decodedReceiveData(String data) {
+
+        String decoded = new String(Base64.decode(data, 0));
+        return decodeURIComponent(decoded);
+    }
+
+    private String decodeURIComponent(String decoded){
+
+        String decodedURI = null;
+        try {
+            decodedURI = URLDecoder.decode(decoded, "UTF-8")
+                    .replaceAll("%20", "\\+")
+                    .replaceAll("!", "\\%21")
+                    .replaceAll("'", "\\%27")
+                    .replaceAll("\\(", "\\%28")
+                    .replaceAll("\\)", "\\%29")
+                    .replaceAll("~", "\\%7E");
+        }
+        catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return decodedURI;
     }
 
     private void cameraAuthRequest(){
@@ -187,52 +252,5 @@ public class WebViewActivity extends AppCompatActivity {
                 finish();
             }
         }
-    }
-
-    @JavascriptInterface
-    public void receive(String data) throws UnsupportedEncodingException {
-
-        String success = "{\"result\": \"success\"}";
-        String failed = "{\"result\": \"failed\"}";
-        String complete = "{\"result\": \"complete\"}";
-        String close = "{\"result\": \"close\"}";
-
-        String decodedData = decodedReceiveData(data);
-        if (decodedData == success) {
-            event = success;
-            result = "KYC 작업이 성공했습니다.";
-            Log.d("success", "KYC 작업이 성공했습니다.");
-        }
-        else if (decodedData == failed) {
-            event = failed;
-            result = "KYC 작업이 실패했습니다.";
-            Log.d("failed", "KYC 작업이 실패했습니다.");
-        }
-        else if (decodedData == complete) {
-            event = complete;
-            result = "KYC가 완료되었습니다.";
-            Log.d("complete", "KYC가 완료되었습니다.");
-        }
-        else if (decodedData == close) {
-            event = close;
-            result = "KYC가 완료되지 않았습니다.";
-            Log.d("close", "KYC가 완료되지 않았습니다.");
-        }
-        else {
-            result = "KYC 응답 메세지 분석에 실패했습니다.";
-            Log.d("decoding failed", "KYC 응답 메세지 분석에 실패했습니다.");
-        }
-
-        try {
-            webview.loadUrl("javascript:self.close();");
-        } catch (Exception e) {
-            finish();
-        }
-    }
-
-    private String decodedReceiveData(String data) throws UnsupportedEncodingException {
-
-        String decoded = Base64.encodeToString(data.getBytes(), 0);
-        return URLDecoder.decode(decoded, "UTF-8");
     }
 }
