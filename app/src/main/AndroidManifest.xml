@@ -28,6 +28,8 @@
         <activity
             android:name=".WebViewActivity"
             android:exported="false" />
+        <activity android:name=".ReportActivity"
+            android:exported="false"/>
         <activity
             android:name=".ReportActivity"
             android:exported="false" />
