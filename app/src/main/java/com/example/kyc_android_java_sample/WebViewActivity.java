@@ -33,7 +33,7 @@ public class WebViewActivity extends AppCompatActivity {
     private WebView webview = null;
     private Handler handler = new Handler();
     String result = "";
-    String event = "";
+    String detail = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,12 +67,30 @@ public class WebViewActivity extends AppCompatActivity {
 
         super.onStop();
 
-        if(result != "") {
-            Intent intent = new Intent(getApplicationContext(), ReportActivity.class);
-            intent.putExtra("event", event);
-            intent.putExtra("result", result);
-            startActivity(intent);
-        }
+        Intent intent = new Intent(getApplicationContext(), ReportActivity.class);
+        intent.putExtra("detail", detail);
+        intent.putExtra("result", result);
+        startActivity(intent);
+    }
+
+    private void postUserInfo(String url, String encodedUserInfo){
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+
+                // 카메라 권한 요청
+                cameraAuthRequest();
+                webview.loadUrl(url);
+                webview.setWebViewClient(new WebViewClient(){
+                    @Override
+                    public void onPageFinished(WebView view, String url){
+
+                        webview.loadUrl("javascript:alcherakycreceive('" + encodedUserInfo +"')");
+                    }
+                });
+            }
+        });
     }
 
     private JSONObject getData() throws JSONException {
@@ -129,24 +147,104 @@ public class WebViewActivity extends AppCompatActivity {
         return encodedData;
     }
 
-    private void postUserInfo(String url, String encodedUserInfo){
+    @JavascriptInterface
+    public void receive(String data) throws JSONException {
 
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
+        String decodedData = decodedReceiveData(data);
+        JSONObject JsonObject = new JSONObject(decodedData);
+        String resultData = "";
 
-                // 카메라 권한 요청
-                cameraAuthRequest();
-                webview.loadUrl(url);
-                webview.setWebViewClient(new WebViewClient(){
-                    @Override
-                    public void onPageFinished(WebView view, String url){
+        try{
+            JsonObject = ModifyReviewResult(JsonObject);
+            resultData = JsonObject.getString("result");
+        }catch (JSONException e){
+            resultData = JsonObject.getString("result");
+        }
 
-                        webview.loadUrl("javascript:alcherakycreceive('" + encodedUserInfo +"')");
-                    }
-                });
-            }
-        });
+        if (resultData.equals("success")) {
+            detail = JsonObject.toString(4);
+            result = "KYC 작업이 성공했습니다.";
+            Log.d("success", "KYC 작업이 성공했습니다.");
+        }
+        else if (resultData.equals("failed")) {
+            detail = JsonObject.toString(4);
+            result = "KYC 작업이 실패했습니다.";
+            Log.d("failed", "KYC 작업이 실패했습니다.");
+        }
+
+        if (resultData.equals("complete")) {
+            detail = JsonObject.toString(4);
+            result = "KYC가 완료되었습니다.";
+            Log.d("complete", "KYC가 완료되었습니다.");
+        }
+        else if (resultData.equals("close")) {
+            detail = JsonObject.toString(4);
+            result = "KYC가 완료되지 않았습니다.";
+            Log.d("close", "KYC가 완료되지 않았습니다.");
+        }
+        finish();
+    }
+
+    private JSONObject ModifyReviewResult(JSONObject JsonObject) throws JSONException {
+
+        String reviewResult = JsonObject.getString("review_result");
+
+        JSONObject reviewResultJsonObject = new JSONObject(reviewResult);
+        String image = reviewResultJsonObject.getString("id_card");
+
+        JSONObject idCardJsonObject = new JSONObject(image);
+        String idCardImage = idCardJsonObject.getString("id_card_image");
+        String idCardOrigin = idCardJsonObject.getString("id_card_origin");
+        String idCropImage = idCardJsonObject.getString("id_crop_image");
+        if(idCardImage!="null"){
+            idCardImage = idCardImage.substring(0, 20) + "...생략(omit)...";
+            idCardJsonObject.put("id_card_image", idCardImage);
+        }
+        if(idCardOrigin!="null"){
+            idCardOrigin = idCardOrigin.substring(0, 20) + "...생략(omit)...";
+            idCardJsonObject.put("id_card_origin", idCardOrigin);
+        }
+        if(idCropImage!="null"){
+            idCropImage = idCropImage.substring(0, 20) + "...생략(omit)...";
+            idCardJsonObject.put("id_crop_image", idCropImage);
+        }
+        reviewResultJsonObject.put("id_card", idCardJsonObject);
+
+        String faceCheck = reviewResultJsonObject.getString("face_check");
+        JSONObject faceCheckObject = new JSONObject(faceCheck);
+        String faceImage = faceCheckObject.getString("selfie_image");
+        if(faceImage != "null"){
+            faceImage = faceImage.substring(0, 20) + "...생략(omit)...";
+            faceCheckObject.put("selfie_image", faceImage);
+        }
+        reviewResultJsonObject.put("face_check", faceCheckObject);
+        JsonObject.put("review_result", reviewResultJsonObject);
+
+        return JsonObject;
+    }
+
+    public String decodedReceiveData(String data) {
+
+        String decoded = new String(Base64.decode(data, 0));
+        return decodeURIComponent(decoded);
+    }
+
+    private String decodeURIComponent(String decoded){
+
+        String decodedURI = null;
+        try {
+            decodedURI = URLDecoder.decode(decoded, "UTF-8")
+                    .replaceAll("%20", "\\+")
+                    .replaceAll("!", "\\%21")
+                    .replaceAll("'", "\\%27")
+                    .replaceAll("\\(", "\\%28")
+                    .replaceAll("\\)", "\\%29")
+                    .replaceAll("~", "\\%7E");
+        }
+        catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return decodedURI;
     }
 
     private void cameraAuthRequest(){
@@ -187,52 +285,5 @@ public class WebViewActivity extends AppCompatActivity {
                 finish();
             }
         }
-    }
-
-    @JavascriptInterface
-    public void receive(String data) throws UnsupportedEncodingException {
-
-        String success = "{\"result\": \"success\"}";
-        String failed = "{\"result\": \"failed\"}";
-        String complete = "{\"result\": \"complete\"}";
-        String close = "{\"result\": \"close\"}";
-
-        String decodedData = decodedReceiveData(data);
-        if (decodedData == success) {
-            event = success;
-            result = "KYC 작업이 성공했습니다.";
-            Log.d("success", "KYC 작업이 성공했습니다.");
-        }
-        else if (decodedData == failed) {
-            event = failed;
-            result = "KYC 작업이 실패했습니다.";
-            Log.d("failed", "KYC 작업이 실패했습니다.");
-        }
-        else if (decodedData == complete) {
-            event = complete;
-            result = "KYC가 완료되었습니다.";
-            Log.d("complete", "KYC가 완료되었습니다.");
-        }
-        else if (decodedData == close) {
-            event = close;
-            result = "KYC가 완료되지 않았습니다.";
-            Log.d("close", "KYC가 완료되지 않았습니다.");
-        }
-        else {
-            result = "KYC 응답 메세지 분석에 실패했습니다.";
-            Log.d("decoding failed", "KYC 응답 메세지 분석에 실패했습니다.");
-        }
-
-        try {
-            webview.loadUrl("javascript:self.close();");
-        } catch (Exception e) {
-            finish();
-        }
-    }
-
-    private String decodedReceiveData(String data) throws UnsupportedEncodingException {
-
-        String decoded = Base64.encodeToString(data.getBytes(), 0);
-        return URLDecoder.decode(decoded, "UTF-8");
     }
 }
