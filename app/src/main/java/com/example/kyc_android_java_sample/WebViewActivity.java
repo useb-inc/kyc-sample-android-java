@@ -108,14 +108,10 @@ public class WebViewActivity extends AppCompatActivity {
         jsonObject.put("customer_id", "12");
         jsonObject.put("id", "demoUser");
         jsonObject.put("key", "demoUser0000!");
-//        jsonObject.put("name", name);
-//        jsonObject.put("birthday",  birthday);
-//        jsonObject.put("phone_number", phoneNumber);
-//        jsonObject.put("email", email);
-        jsonObject.put("name", "이시은");
-        jsonObject.put("birthday", "1999-03-28");
-        jsonObject.put("phone_number", "01082888288");
-        jsonObject.put("email", "tldms@naver.com");
+        jsonObject.put("name", name);
+        jsonObject.put("birthday",  birthday);
+        jsonObject.put("phone_number", phoneNumber);
+        jsonObject.put("email", email);
 
         return jsonObject;
     }
