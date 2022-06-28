@@ -5,9 +5,11 @@
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/edge.xml" value="0.144" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/activity_report.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/activity_dataresult.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/activity_report.xml" value="0.4578146611341632" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.3591485507246377" />
+        <entry key="app/src/main/res/layout/activity_uiresult.xml" value="0.21693840579710144" />
         <entry key="app/src/main/res/layout/activity_web_view.xml" value="0.34536082474226804" />
         <entry key="app/src/main/res/layout/test.html" value="0.23854166666666668" />
       </map>

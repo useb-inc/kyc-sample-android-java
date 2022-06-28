@@ -10,7 +10,7 @@ import org.json.JSONException;
 public class ReportActivity extends AppCompatActivity {
 
     String result = "";
-    String event = "";
+    String detail = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,20 +23,20 @@ public class ReportActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        setData(event, result);
+        setData(detail, result);
     }
 
     private void getData() throws JSONException {
 
-        event = getIntent().getStringExtra("event");
+        detail = getIntent().getStringExtra("detail");
         result = getIntent().getStringExtra("result");
     }
 
-    private void setData(String event, String result){
+    private void setData(String detail, String result){
 
-        TextView eventTv = findViewById(R.id.event);
+        TextView detailTv = findViewById(R.id.detail);
         TextView resultTv = findViewById(R.id.result);
-        eventTv.setText(event);
+        detailTv.setText(detail);
         resultTv.setText(result);
     }
 }

@@ -33,7 +33,7 @@ public class WebViewActivity extends AppCompatActivity {
     private WebView webview = null;
     private Handler handler = new Handler();
     String result = "";
-    String event = "";
+    String detail = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,12 +67,10 @@ public class WebViewActivity extends AppCompatActivity {
 
         super.onStop();
 
-        if(result != "") {
-            Intent intent = new Intent(getApplicationContext(), ReportActivity.class);
-            intent.putExtra("event", event);
-            intent.putExtra("result", result);
-            startActivity(intent);
-        }
+        Intent intent = new Intent(getApplicationContext(), ReportActivity.class);
+        intent.putExtra("detail", detail);
+        intent.putExtra("result", result);
+        startActivity(intent);
     }
 
     private void postUserInfo(String url, String encodedUserInfo){
@@ -110,10 +108,14 @@ public class WebViewActivity extends AppCompatActivity {
         jsonObject.put("customer_id", "12");
         jsonObject.put("id", "demoUser");
         jsonObject.put("key", "demoUser0000!");
-        jsonObject.put("name", name);
-        jsonObject.put("birthday",  birthday);
-        jsonObject.put("phone_number", phoneNumber);
-        jsonObject.put("email", email);
+//        jsonObject.put("name", name);
+//        jsonObject.put("birthday",  birthday);
+//        jsonObject.put("phone_number", phoneNumber);
+//        jsonObject.put("email", email);
+        jsonObject.put("name", "이시은");
+        jsonObject.put("birthday", "1999-03-28");
+        jsonObject.put("phone_number", "01082888288");
+        jsonObject.put("email", "tldms@naver.com");
 
         return jsonObject;
     }
@@ -150,47 +152,82 @@ public class WebViewActivity extends AppCompatActivity {
     }
 
     @JavascriptInterface
-    public void receive(String data) {
-
-        String success = "{\"result\": \"success\"}";
-        String failed = "{\"result\": \"failed\"}";
-        String complete = "{\"result\": \"complete\"}";
-        String close = "{\"result\": \"close\"}";
+    public void receive(String data) throws JSONException {
 
         String decodedData = decodedReceiveData(data);
-        if (decodedData == success) {
-            event = success;
+        JSONObject JsonObject = new JSONObject(decodedData);
+        String resultData = "";
+
+        try{
+            JsonObject = ModifyReviewResult(JsonObject);
+            resultData = JsonObject.getString("result");
+        }catch (JSONException e){
+            resultData = JsonObject.getString("result");
+        }
+
+        if (resultData.equals("success")) {
+            detail = JsonObject.toString(4);
             result = "KYC 작업이 성공했습니다.";
             Log.d("success", "KYC 작업이 성공했습니다.");
         }
-        else if (decodedData == failed) {
-            event = failed;
+        else if (resultData.equals("failed")) {
+            detail = JsonObject.toString(4);
             result = "KYC 작업이 실패했습니다.";
             Log.d("failed", "KYC 작업이 실패했습니다.");
         }
-        else if (decodedData == complete) {
-            event = complete;
+
+        if (resultData.equals("complete")) {
+            detail = JsonObject.toString(4);
             result = "KYC가 완료되었습니다.";
             Log.d("complete", "KYC가 완료되었습니다.");
         }
-        else if (decodedData == close) {
-            event = close;
+        else if (resultData.equals("close")) {
+            detail = JsonObject.toString(4);
             result = "KYC가 완료되지 않았습니다.";
             Log.d("close", "KYC가 완료되지 않았습니다.");
         }
-        else {
-            result = "KYC 응답 메세지 분석에 실패했습니다.";
-            Log.d("decoding failed", "KYC 응답 메세지 분석에 실패했습니다.");
-        }
-
-        try {
-            webview.loadUrl("javascript:self.close();");
-        } catch (Exception e) {
-            finish();
-        }
+        finish();
     }
 
-    private String decodedReceiveData(String data) {
+    private JSONObject ModifyReviewResult(JSONObject JsonObject) throws JSONException {
+
+        String reviewResult = JsonObject.getString("review_result");
+
+        JSONObject reviewResultJsonObject = new JSONObject(reviewResult);
+        String image = reviewResultJsonObject.getString("id_card");
+
+        JSONObject idCardJsonObject = new JSONObject(image);
+        String idCardImage = idCardJsonObject.getString("id_card_image");
+        String idCardOrigin = idCardJsonObject.getString("id_card_origin");
+        String idCropImage = idCardJsonObject.getString("id_crop_image");
+        if(idCardImage!="null"){
+            idCardImage = idCardImage.substring(0, 20) + "...생략(omit)...";
+            idCardJsonObject.put("id_card_image", idCardImage);
+        }
+        if(idCardOrigin!="null"){
+            idCardOrigin = idCardOrigin.substring(0, 20) + "...생략(omit)...";
+            idCardJsonObject.put("id_card_origin", idCardOrigin);
+        }
+        if(idCropImage!="null"){
+            idCropImage = idCropImage.substring(0, 20) + "...생략(omit)...";
+            idCardJsonObject.put("id_crop_image", idCropImage);
+        }
+        reviewResultJsonObject.put("id_card", idCardJsonObject);
+
+        String faceCheck = reviewResultJsonObject.getString("face_check");
+        JSONObject faceCheckObject = new JSONObject(faceCheck);
+        String faceImage = faceCheckObject.getString("selfie_image");
+        if(faceImage != "null"){
+            faceImage = faceImage.substring(0, 20) + "...생략(omit)...";
+            faceCheckObject.put("selfie_image", faceImage);
+        }
+        reviewResultJsonObject.put("face_check", faceCheckObject);
+        JsonObject.put("review_result", reviewResultJsonObject);
+
+        return JsonObject;
+    }
+
+    public String decodedReceiveData(String data) {
 
         String decoded = new String(Base64.decode(data, 0));
         return decodeURIComponent(decoded);
