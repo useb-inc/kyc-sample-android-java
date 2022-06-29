@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:viewBindingIgnore="true"
     tools:context=".ReportActivity">
+
     <ScrollView
         android:id="@+id/bio_scroll"
         android:layout_width="match_parent"
@@ -78,6 +79,5 @@
                 android:layout_height="300px" />
 
         </LinearLayout>
-
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

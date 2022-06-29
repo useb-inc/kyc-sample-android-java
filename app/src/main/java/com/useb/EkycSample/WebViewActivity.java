@@ -30,8 +30,8 @@ import java.net.URLEncoder;
 public class WebViewActivity extends AppCompatActivity {
 
     private ActivityWebViewBinding binding;
-    private WebView webview = null;
     private Handler handler = new Handler();
+    private WebView webview = null;
     private String result = "";
     private String detail = "";
 

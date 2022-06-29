@@ -9,8 +9,8 @@ import org.json.JSONException;
 
 public class ReportActivity extends AppCompatActivity {
 
-    String result = "";
-    String detail = "";
+    private String result = "";
+    private String detail = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -2,10 +2,17 @@ package com.useb.EkycSample;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.renderscript.ScriptGroup;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.useb.EkycSample.databinding.ActivityMainBinding;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,13 +30,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent secondIntent = new Intent(getApplicationContext(), WebViewActivity.class);
-                sendDataToWebview(secondIntent);
-                startActivity(secondIntent);
+                if(sendDataToWebview(secondIntent))
+                    startActivity(secondIntent);
             }
         });
     }
 
-    private void sendDataToWebview(Intent secondIntent){
+    private boolean sendDataToWebview(Intent secondIntent){
 
         String yearStr = binding.year.getText().toString();
         String monthStr = binding.month.getText().toString();
@@ -44,9 +51,31 @@ public class MainActivity extends AppCompatActivity {
         String phoneNumber = binding.phoneNumber.getText().toString();
         String email = binding.email.getText().toString();
 
-        secondIntent.putExtra("birthday", birthday);
-        secondIntent.putExtra("name", name);
-        secondIntent.putExtra("phoneNumber", phoneNumber);
-        secondIntent.putExtra("email", email);
+        if(isValid(email, name, phoneNumber, birthday)) {
+            secondIntent.putExtra("birthday", birthday);
+            secondIntent.putExtra("name", name);
+            secondIntent.putExtra("phoneNumber", phoneNumber);
+            secondIntent.putExtra("email", email);
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    private boolean isValid(String email, String name, String phoneNumber, String birthday){
+
+        InputValidator inputValidator = new InputValidator();
+        boolean allowFlag = true;
+
+        if(inputValidator.isNullOrEmpty(email) || inputValidator.isNullOrEmpty(name) || inputValidator.isNullOrEmpty(phoneNumber) || inputValidator.isNullOrEmpty(birthday)) {
+            Toast.makeText(MainActivity.this, "빈 칸을 모두 채워주세요", Toast.LENGTH_SHORT).show();
+            allowFlag = false;
+        }
+        else if (!inputValidator.isValidEmail(email)) {
+            Toast.makeText(MainActivity.this, "이메일 형식에 맞지 않습니다.", Toast.LENGTH_SHORT).show();
+            allowFlag = false;
+        }
+
+        return allowFlag;
     }
 }
