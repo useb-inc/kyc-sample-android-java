@@ -1,4 +1,4 @@
-package com.example.kyc_android_java_sample;
+package com.useb.EkycSample;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.example.kyc_android_java_sample", appContext.getPackageName());
+        assertEquals("com.useb.EkycSample", appContext.getPackageName());
     }
 }

@@ -10,7 +10,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.example.kyc_android_java_sample"
+        applicationId "com.useb.EkycSample"
         minSdk 21
         targetSdk 32
         versionCode 1

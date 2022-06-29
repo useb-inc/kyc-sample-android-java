@@ -1,4 +1,4 @@
-package com.example.kyc_android_java_sample;
+package com.useb.EkycSample;
 
 import android.Manifest;
 import android.content.Intent;
@@ -20,7 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.example.kyc_android_java_sample.databinding.ActivityWebViewBinding;
+import com.useb.EkycSample.databinding.ActivityWebViewBinding;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
@@ -32,8 +32,8 @@ public class WebViewActivity extends AppCompatActivity {
     private ActivityWebViewBinding binding;
     private WebView webview = null;
     private Handler handler = new Handler();
-    String result = "";
-    String detail = "";
+    private String result = "";
+    private String detail = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

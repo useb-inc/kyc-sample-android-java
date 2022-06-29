@@ -1,12 +1,11 @@
-package com.example.kyc_android_java_sample;
+package com.useb.EkycSample;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.kyc_android_java_sample.databinding.ActivityMainBinding;
+import com.useb.EkycSample.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
 

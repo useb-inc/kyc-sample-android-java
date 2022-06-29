@@ -1,4 +1,4 @@
-package com.example.kyc_android_java_sample;
+package com.useb.EkycSample;
 
 import android.content.Intent;
 import android.os.Bundle;
