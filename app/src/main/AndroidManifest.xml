@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.useb.EkycSample">
+    package="com.useb.ekyc_sample">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -23,16 +23,16 @@
         tools:targetApi="31"
         android:usesCleartextTraffic="true">
         <activity
-            android:name="com.useb.EkycSample.MainActivity"
+            android:name="com.useb.ekyc_sample.MainActivity"
             android:exported="false" />
         <activity
-            android:name="com.useb.EkycSample.WebViewActivity"
+            android:name="com.useb.ekyc_sample.WebViewActivity"
             android:exported="false" />
         <activity
-            android:name="com.useb.EkycSample.ReportActivity"
+            android:name="com.useb.ekyc_sample.ReportActivity"
             android:exported="false" />
         <activity
-            android:name="com.useb.EkycSample.SplashActivity"
+            android:name="com.useb.ekyc_sample.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,4 +1,4 @@
-package com.useb.EkycSample;
+package com.useb.ekyc_sample;
 
 import android.content.Intent;
 import android.os.Bundle;

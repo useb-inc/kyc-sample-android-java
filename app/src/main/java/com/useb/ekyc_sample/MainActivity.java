@@ -1,18 +1,13 @@
-package com.useb.EkycSample;
+package com.useb.ekyc_sample;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.renderscript.ScriptGroup;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.useb.EkycSample.databinding.ActivityMainBinding;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.useb.ekyc_sample.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
 

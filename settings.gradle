@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "EkycSample"
+rootProject.name = "ekyc_sample"
 include ':app'

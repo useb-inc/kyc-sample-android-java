@@ -63,8 +63,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="홍길동"/>
-                <!--android:inputType="textPassword"-->
-                <!--/>-->
+
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
@@ -80,7 +79,7 @@
                 android:text="생년월일 (YYYY-MM-DD)"/> <!-- 크기 임의로 지정 -->
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
