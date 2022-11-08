@@ -4,52 +4,62 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context="MainActivity">
 
     <ScrollView
         android:id="@+id/bio_scroll"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="300px" /> <!-- 크기 임의로 지정 -->
+                android:layout_height="100dp" /> <!-- 크기 임의로 지정 -->
 
-            <ImageView
-                android:layout_width="200dp"
-                android:layout_height="80dp"
-                android:src="@drawable/logo"
-                android:layout_gravity="center" /><!-- 크기 임의로 지정 -->
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="useB.eKYC"
+                android:textColor="@color/black"
+                android:textSize="30dp"
+                android:textStyle="bold" />
+
+            <!-- 크기 임의로 지정 -->
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="30px" /> <!-- 크기 임의로 지정 -->
+                android:layout_height="10dp" /> <!-- 크기 임의로 지정 -->
+
+            <!-- 크기 임의로 지정 -->
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Alchera eKYC Sample"
-                android:textStyle="bold"
+                android:gravity="center_horizontal"
+                android:text="Android(Java) Sample"
                 android:textColor="@color/black"
                 android:textSize="20dp"
-                android:gravity="center_horizontal"/><!-- 크기 임의로 지정 -->
+                android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="70px" /> <!-- 크기 임의로 지정 -->
+                android:layout_height="25dp" /> <!-- 크기 임의로 지정 -->
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:textSize="18dp"
                 android:paddingLeft="50dp"
-                android:text="이름"/> <!-- 크기 임의로 지정 -->
+                android:text="이름"
+                android:textColor="@color/black"
+                android:textSize="18dp" /> <!-- 크기 임의로 지정 -->
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -68,32 +78,34 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="40px" /> <!-- 크기 임의로 지정 -->
+                android:layout_height="13dp" /> <!-- 크기 임의로 지정 -->
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:textSize="18dp"
                 android:paddingLeft="50dp"
-                android:text="생년월일 (YYYY-MM-DD)"/> <!-- 크기 임의로 지정 -->
+                android:text="생년월일 (YYYY-MM-DD)"
+                android:textColor="@color/black"
+                android:textSize="18dp" /> <!-- 크기 임의로 지정 -->
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="50dp"
                 android:layout_marginRight="50dp">
+
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_weight="3"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2">
 
                     <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/year"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/year"
-                        android:hint="1990"/>
+                        android:hint="1990"
+                        android:inputType="number" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
@@ -104,15 +116,16 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_weight="2"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/month"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="01"/>
+                        android:hint="01"
+                        android:inputType="number" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
@@ -123,29 +136,30 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_weight="2"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/day"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="01"/>
+                        android:hint="01"
+                        android:inputType="number" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="40px" /> <!-- 크기 임의로 지정 -->
+                android:layout_height="13dp" /> <!-- 크기 임의로 지정 -->
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:textSize="18dp"
                 android:paddingLeft="50dp"
-                android:text="전화번호 ( ''-'' 없이 입력 )"/> <!-- 크기 임의로 지정 -->
+                android:text="전화번호 ( ''-'' 없이 입력 )"
+                android:textColor="@color/black"
+                android:textSize="18dp" /> <!-- 크기 임의로 지정 -->
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -158,20 +172,21 @@
                     android:id="@+id/phone_number"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="01012345678"/>
+                    android:hint="01012345678"
+                    android:inputType="number" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="40px" /> <!-- 크기 임의로 지정 -->
+                android:layout_height="13dp" /> <!-- 크기 임의로 지정 -->
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:textSize="18dp"
                 android:paddingLeft="50dp"
-                android:text="이메일"/> <!-- 크기 임의로 지정 -->
+                android:text="이메일"
+                android:textColor="@color/black"
+                android:textSize="18dp" /> <!-- 크기 임의로 지정 -->
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -184,19 +199,19 @@
                     android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="email@address.com"/>
+                    android:hint="email@address.com" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/run_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/run_button"
-                android:layout_marginTop="70px"
                 android:layout_marginLeft="50dp"
+                android:layout_marginTop="25dp"
                 android:layout_marginRight="50dp"
                 android:background="@color/blue"
-                android:textColor="@color/white"
-                android:text="Run" />
+                android:text="Run"
+                android:textColor="@color/white" />
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
