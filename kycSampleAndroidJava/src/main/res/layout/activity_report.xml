@@ -14,69 +14,66 @@
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical" >
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="300px" />
+                android:layout_height="50dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/blue"
-                android:textSize="40px"
+                android:textSize="20sp"
+                android:textColor="?android:textColorPrimary"
+                android:layout_marginTop="30dp"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:text="Result"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="50dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/result"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?android:textColorPrimary"
+                android:textSize="20sp"
+                android:layout_marginTop="30dp"
                 android:layout_gravity="center"
                 android:textStyle="bold"
                 android:text="PostMessage 상세"/>
 
-            <TextView
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/detail"
-                android:textColor="@color/black"
-                android:background="@drawable/edge"
-                android:layout_marginLeft="100px"
-                android:layout_marginRight="100px"
-                android:layout_marginTop="10px"
-                android:paddingLeft="50px"
-                android:paddingRight="50px"
-                android:paddingTop="50px"
-                android:paddingBottom="50px"
-                android:textSize="38px"
-                android:text=""/>
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="50dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/detail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="100px" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="40px"
-                android:textColor="@color/blue"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:text="result"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/result"
-                android:textColor="@color/black"
-                android:textSize="38px"
-                android:layout_marginLeft="100px"
-                android:layout_marginRight="100px"
-                android:layout_marginTop="10px"
-                android:paddingLeft="50px"
-                android:paddingRight="50px"
-                android:paddingTop="50px"
-                android:paddingBottom="50px"
-                android:background="@drawable/edge"
-                android:text=""/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="300px" />
+                android:layout_height="50dp" />
 
         </LinearLayout>
     </ScrollView>

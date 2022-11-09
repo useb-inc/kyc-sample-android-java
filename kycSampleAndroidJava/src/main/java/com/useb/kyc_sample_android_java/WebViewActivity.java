@@ -61,6 +61,12 @@ public class WebViewActivity extends AppCompatActivity {
         postUserInfo(url, encodedUserInfo);
     }
 
+    // WebView 액티비티에서 뒤로가기 버튼 막기
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+    }
+
     // webview가 닫히면 result를 보여주는 화면으로 전환
     @Override
     public void onStop() {
