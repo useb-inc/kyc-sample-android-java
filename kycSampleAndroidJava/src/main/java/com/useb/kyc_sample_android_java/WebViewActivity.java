@@ -1,4 +1,4 @@
-package com.useb.ekyc_sample;
+package com.useb.kyc_sample_android_java;
 
 import android.Manifest;
 import android.content.Intent;
@@ -20,7 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.useb.ekyc_sample.databinding.ActivityWebViewBinding;
+import com.useb.kyc_sample_android_java.databinding.ActivityWebViewBinding;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;

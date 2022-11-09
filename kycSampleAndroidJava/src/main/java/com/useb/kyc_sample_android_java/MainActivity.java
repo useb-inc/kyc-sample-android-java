@@ -1,4 +1,4 @@
-package com.useb.ekyc_sample;
+package com.useb.kyc_sample_android_java;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,7 +7,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.useb.ekyc_sample.databinding.ActivityMainBinding;
+import com.useb.kyc_sample_android_java.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
 

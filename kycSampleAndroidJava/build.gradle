@@ -10,7 +10,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.useb.ekyc_sample"
+        applicationId "com.useb.kyc_sample_android_java"
         minSdk 21
         targetSdk 32
         versionCode 1

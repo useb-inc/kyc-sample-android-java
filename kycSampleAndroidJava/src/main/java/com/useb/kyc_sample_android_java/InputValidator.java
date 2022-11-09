@@ -1,4 +1,4 @@
-package com.useb.ekyc_sample;
+package com.useb.kyc_sample_android_java;
 
 import android.text.TextUtils;
 
