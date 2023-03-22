@@ -67,18 +67,6 @@ public class WebViewActivity extends AppCompatActivity {
         //super.onBackPressed();
     }
 
-    // webview가 닫히면 result를 보여주는 화면으로 전환
-    @Override
-    public void onStop() {
-
-        super.onStop();
-
-        Intent intent = new Intent(getApplicationContext(), ReportActivity.class);
-        intent.putExtra("detail", detail);
-        intent.putExtra("result", result);
-        startActivity(intent);
-    }
-
     private void postUserInfo(String url, String encodedUserInfo){
 
         handler.post(new Runnable() {
@@ -155,7 +143,6 @@ public class WebViewActivity extends AppCompatActivity {
 
     @JavascriptInterface
     public void receive(String data) throws JSONException {
-
         String decodedData = decodedReceiveData(data);
         JSONObject JsonObject = new JSONObject(decodedData);
         String resultData = "";
@@ -164,6 +151,7 @@ public class WebViewActivity extends AppCompatActivity {
             JsonObject = ModifyReviewResult(JsonObject);
             resultData = JsonObject.getString("result");
         }catch (JSONException e){
+            Log.e("JSONEXCEPTION",e.getMessage());
             resultData = JsonObject.getString("result");
         }
 
@@ -188,6 +176,12 @@ public class WebViewActivity extends AppCompatActivity {
             result = "KYC가 완료되지 않았습니다.";
             Log.d("close", "KYC가 완료되지 않았습니다.");
         }
+
+        Intent intent = new Intent(getApplicationContext(), ReportActivity.class);
+        intent.putExtra("detail", detail);
+        intent.putExtra("result", result);
+        startActivity(intent);
+
         finish();
     }
 
