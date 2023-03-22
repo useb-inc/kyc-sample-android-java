@@ -21,8 +21,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.useb.kyc_sample_android_java.databinding.ActivityWebViewBinding;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -30,7 +32,7 @@ import java.net.URLEncoder;
 public class WebViewActivity extends AppCompatActivity {
 
     private ActivityWebViewBinding binding;
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
     private WebView webview = null;
     private String result = "";
     private String detail = "";
@@ -51,7 +53,7 @@ public class WebViewActivity extends AppCompatActivity {
         webview.getSettings().setJavaScriptEnabled(true);
         webview.setWebViewClient(new WebViewClient());
         webview.setWebChromeClient(new WebChromeClient());
-        webview.addJavascriptInterface(this,"alcherakyc");
+        webview.addJavascriptInterface(this, "alcherakyc");
 
         // 사용자 데이터 인코딩
         String userInfo = null;
@@ -67,7 +69,7 @@ public class WebViewActivity extends AppCompatActivity {
         //super.onBackPressed();
     }
 
-    private void postUserInfo(String url, String encodedUserInfo){
+    private void postUserInfo(String url, String encodedUserInfo) {
 
         handler.post(new Runnable() {
             @Override
@@ -76,11 +78,11 @@ public class WebViewActivity extends AppCompatActivity {
                 // 카메라 권한 요청
                 cameraAuthRequest();
                 webview.loadUrl(url);
-                webview.setWebViewClient(new WebViewClient(){
+                webview.setWebViewClient(new WebViewClient() {
                     @Override
-                    public void onPageFinished(WebView view, String url){
+                    public void onPageFinished(WebView view, String url) {
 
-                        webview.loadUrl("javascript:alcherakycreceive('" + encodedUserInfo +"')");
+                        webview.loadUrl("javascript:alcherakycreceive('" + encodedUserInfo + "')");
                     }
                 });
             }
@@ -103,14 +105,14 @@ public class WebViewActivity extends AppCompatActivity {
         jsonObject.put("id", "demoUser");
         jsonObject.put("key", "demoUser0000!");
         jsonObject.put("name", name);
-        jsonObject.put("birthday",  birthday);
+        jsonObject.put("birthday", birthday);
         jsonObject.put("phone_number", phoneNumber);
         jsonObject.put("email", email);
 
         return jsonObject;
     }
 
-    private String encodeURIComponent(String encoded){
+    private String encodeURIComponent(String encoded) {
 
         String encodedURI = null;
         try {
@@ -121,15 +123,14 @@ public class WebViewActivity extends AppCompatActivity {
                     .replaceAll("\\%28", "(")
                     .replaceAll("\\%29", ")")
                     .replaceAll("\\%7E", "~");
-        }
-        catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 
         return encodedURI;
     }
 
-    private String encodeJson(String data){
+    private String encodeJson(String data) {
 
         String encodedData = null;
         try {
@@ -147,11 +148,11 @@ public class WebViewActivity extends AppCompatActivity {
         JSONObject JsonObject = new JSONObject(decodedData);
         String resultData = "";
 
-        try{
+        try {
             JsonObject = ModifyReviewResult(JsonObject);
             resultData = JsonObject.getString("result");
-        }catch (JSONException e){
-            Log.e("JSONEXCEPTION",e.getMessage());
+        } catch (JSONException e) {
+            Log.e("JSONEXCEPTION", e.getMessage());
             resultData = JsonObject.getString("result");
         }
 
@@ -159,8 +160,7 @@ public class WebViewActivity extends AppCompatActivity {
             detail = JsonObject.toString(4);
             result = "KYC 작업이 성공했습니다.";
             Log.d("success", "KYC 작업이 성공했습니다.");
-        }
-        else if (resultData.equals("failed")) {
+        } else if (resultData.equals("failed")) {
             detail = JsonObject.toString(4);
             result = "KYC 작업이 실패했습니다.";
             Log.d("failed", "KYC 작업이 실패했습니다.");
@@ -170,8 +170,7 @@ public class WebViewActivity extends AppCompatActivity {
             detail = JsonObject.toString(4);
             result = "KYC가 완료되었습니다.";
             Log.d("complete", "KYC가 완료되었습니다.");
-        }
-        else if (resultData.equals("close")) {
+        } else if (resultData.equals("close")) {
             detail = JsonObject.toString(4);
             result = "KYC가 완료되지 않았습니다.";
             Log.d("close", "KYC가 완료되지 않았습니다.");
@@ -196,15 +195,15 @@ public class WebViewActivity extends AppCompatActivity {
         String idCardImage = idCardJsonObject.getString("id_card_image");
         String idCardOrigin = idCardJsonObject.getString("id_card_origin");
         String idCropImage = idCardJsonObject.getString("id_crop_image");
-        if(idCardImage!="null"){
+        if (idCardImage != "null") {
             idCardImage = idCardImage.substring(0, 20) + "...생략(omit)...";
             idCardJsonObject.put("id_card_image", idCardImage);
         }
-        if(idCardOrigin!="null"){
+        if (idCardOrigin != "null") {
             idCardOrigin = idCardOrigin.substring(0, 20) + "...생략(omit)...";
             idCardJsonObject.put("id_card_origin", idCardOrigin);
         }
-        if(idCropImage!="null"){
+        if (idCropImage != "null") {
             idCropImage = idCropImage.substring(0, 20) + "...생략(omit)...";
             idCardJsonObject.put("id_crop_image", idCropImage);
         }
@@ -213,7 +212,7 @@ public class WebViewActivity extends AppCompatActivity {
         String faceCheck = reviewResultJsonObject.getString("face_check");
         JSONObject faceCheckObject = new JSONObject(faceCheck);
         String faceImage = faceCheckObject.getString("selfie_image");
-        if(faceImage != "null"){
+        if (faceImage != "null") {
             faceImage = faceImage.substring(0, 20) + "...생략(omit)...";
             faceCheckObject.put("selfie_image", faceImage);
         }
@@ -229,7 +228,7 @@ public class WebViewActivity extends AppCompatActivity {
         return decodeURIComponent(decoded);
     }
 
-    private String decodeURIComponent(String decoded){
+    private String decodeURIComponent(String decoded) {
 
         String decodedURI = null;
         try {
@@ -240,14 +239,13 @@ public class WebViewActivity extends AppCompatActivity {
                     .replaceAll("\\(", "\\%28")
                     .replaceAll("\\)", "\\%29")
                     .replaceAll("~", "\\%7E");
-        }
-        catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
         return decodedURI;
     }
 
-    private void cameraAuthRequest(){
+    private void cameraAuthRequest() {
 
         webview = binding.webview;
         WebSettings ws = webview.getSettings();
@@ -276,7 +274,7 @@ public class WebViewActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 1000) {

@@ -18,12 +18,12 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
         finish();
     }
 
-    private class SplashHandler implements Runnable{
+    private class SplashHandler implements Runnable {
 
         @Override
         public void run() {

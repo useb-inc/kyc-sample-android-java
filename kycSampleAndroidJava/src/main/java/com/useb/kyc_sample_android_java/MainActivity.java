@@ -25,19 +25,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent secondIntent = new Intent(getApplicationContext(), WebViewActivity.class);
-                if(sendDataToWebview(secondIntent))
+                if (sendDataToWebview(secondIntent))
                     startActivity(secondIntent);
             }
         });
     }
 
-    private boolean sendDataToWebview(Intent secondIntent){
+    private boolean sendDataToWebview(Intent secondIntent) {
 
         String yearStr = binding.year.getText().toString();
         String monthStr = binding.month.getText().toString();
         String dayStr = binding.day.getText().toString();
         String birthday;
-        if(yearStr.length() == 0 || monthStr.length() == 0 || dayStr.length() == 0)
+        if (yearStr.length() == 0 || monthStr.length() == 0 || dayStr.length() == 0)
             birthday = "";
         else
             birthday = yearStr + "-" + monthStr + "-" + dayStr;
@@ -46,27 +46,26 @@ public class MainActivity extends AppCompatActivity {
         String phoneNumber = binding.phoneNumber.getText().toString();
         String email = binding.email.getText().toString();
 
-        if(isValid(email, name, phoneNumber, birthday)) {
+        if (isValid(email, name, phoneNumber, birthday)) {
             secondIntent.putExtra("birthday", birthday);
             secondIntent.putExtra("name", name);
             secondIntent.putExtra("phoneNumber", phoneNumber);
             secondIntent.putExtra("email", email);
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    private boolean isValid(String email, String name, String phoneNumber, String birthday){
+    private boolean isValid(String email, String name, String phoneNumber, String birthday) {
 
         InputValidator inputValidator = new InputValidator();
         boolean allowFlag = true;
 
-        if(inputValidator.isNullOrEmpty(email) || inputValidator.isNullOrEmpty(name) || inputValidator.isNullOrEmpty(phoneNumber) || inputValidator.isNullOrEmpty(birthday)) {
+        if (inputValidator.isNullOrEmpty(email) || inputValidator.isNullOrEmpty(name) || inputValidator.isNullOrEmpty(phoneNumber) || inputValidator.isNullOrEmpty(birthday)) {
             Toast.makeText(MainActivity.this, "빈 칸을 모두 채워주세요", Toast.LENGTH_SHORT).show();
             allowFlag = false;
-        }
-        else if (!inputValidator.isValidEmail(email)) {
+        } else if (!inputValidator.isValidEmail(email)) {
             Toast.makeText(MainActivity.this, "이메일 형식에 맞지 않습니다.", Toast.LENGTH_SHORT).show();
             allowFlag = false;
         }

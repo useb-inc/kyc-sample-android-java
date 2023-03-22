@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import org.json.JSONException;
 
 
@@ -32,7 +33,7 @@ public class ReportActivity extends AppCompatActivity {
         result = getIntent().getStringExtra("result");
     }
 
-    private void setData(String detail, String result){
+    private void setData(String detail, String result) {
 
         TextView detailTv = findViewById(R.id.detail);
         TextView resultTv = findViewById(R.id.result);
