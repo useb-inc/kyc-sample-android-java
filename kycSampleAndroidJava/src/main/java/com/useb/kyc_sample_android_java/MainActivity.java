@@ -45,12 +45,18 @@ public class MainActivity extends AppCompatActivity {
         String name = binding.name.getText().toString();
         String phoneNumber = binding.phoneNumber.getText().toString();
         String email = binding.email.getText().toString();
+        String url = binding.url.getText().toString();
+        boolean wasmOcrMode = binding.wasmOcrMode.isChecked();
+        boolean wasmSsaMode = binding.wasmSsaMode.isChecked();
 
         if (isValid(email, name, phoneNumber, birthday)) {
             secondIntent.putExtra("birthday", birthday);
             secondIntent.putExtra("name", name);
             secondIntent.putExtra("phoneNumber", phoneNumber);
             secondIntent.putExtra("email", email);
+            secondIntent.putExtra("url", url);
+            secondIntent.putExtra("wasmOcrMode", wasmOcrMode);
+            secondIntent.putExtra("wasmSsaMode", wasmSsaMode);
             return true;
         } else {
             return false;

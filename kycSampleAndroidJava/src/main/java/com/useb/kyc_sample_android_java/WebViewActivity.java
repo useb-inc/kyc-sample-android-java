@@ -32,7 +32,7 @@ import java.net.URLEncoder;
 public class WebViewActivity extends AppCompatActivity {
 
     private ActivityWebViewBinding binding;
-    private final Handler handler = new Handler();
+    private Handler handler = new Handler();
     private WebView webview = null;
     private String result = "";
     private String detail = "";
@@ -42,7 +42,11 @@ public class WebViewActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view);
-        String url = "https://kyc.useb.co.kr/auth";
+
+        // 디버깅 실정
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            WebView.setWebContentsDebuggingEnabled(true);
+        }
 
         // 바인딩 설정
         binding = ActivityWebViewBinding.inflate(getLayoutInflater());
@@ -55,19 +59,25 @@ public class WebViewActivity extends AppCompatActivity {
         webview.setWebChromeClient(new WebChromeClient());
         webview.addJavascriptInterface(this, "alcherakyc");
 
+        // 카메라 프리뷰 성능
+        webview.clearCache(true);
+        webview.clearHistory();
+
+
         // 사용자 데이터 인코딩
         String userInfo = null;
         String encodedUserInfo = encodeJson(userInfo);
 
+        String url = getIntent().getStringExtra("url");
         // POST
         postUserInfo(url, encodedUserInfo);
     }
 
-    // WebView 액티비티에서 뒤로가기 버튼 막기
-    @Override
-    public void onBackPressed() {
-        //super.onBackPressed();
-    }
+//    // WebView 액티비티에서 뒤로가기 버튼 막기
+//    @Override
+//    public void onBackPressed() {
+//        //super.onBackPressed();
+//    }
 
     private void postUserInfo(String url, String encodedUserInfo) {
 
@@ -95,10 +105,13 @@ public class WebViewActivity extends AppCompatActivity {
         String name = getIntent().getStringExtra("name");
         String phoneNumber = getIntent().getStringExtra("phoneNumber");
         String email = getIntent().getStringExtra("email");
-        return dataToJson(birthday, name, phoneNumber, email);
+        String isWasmOCRMode = getIntent().getBooleanExtra("wasmOcrMode", false) ? "true" : "false";
+        String isWasmSSAMode = getIntent().getBooleanExtra("wasmSsaMode", false) ? "true" : "false";
+
+        return dataToJson(birthday, name, phoneNumber, email, isWasmOCRMode, isWasmSSAMode);
     }
 
-    private JSONObject dataToJson(String birthday, String name, String phoneNumber, String email) throws JSONException {
+    private JSONObject dataToJson(String birthday, String name, String phoneNumber, String email, String isWasmOCRMode, String isWasmSSAMode) throws JSONException {
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("customer_id", "12");
@@ -108,6 +121,8 @@ public class WebViewActivity extends AppCompatActivity {
         jsonObject.put("birthday", birthday);
         jsonObject.put("phone_number", phoneNumber);
         jsonObject.put("email", email);
+        jsonObject.put("isWasmOCRMode", isWasmOCRMode);
+        jsonObject.put("isWasmSSAMode", isWasmSSAMode);
 
         return jsonObject;
     }
