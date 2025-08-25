@@ -1,7 +1,6 @@
 package com.useb.kyc_sample_android_java;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,8 +19,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.useb.kyc_sample_android_java.databinding.ActivityWebViewBinding;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,105 +27,60 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 public class WebViewActivity extends AppCompatActivity {
-
-    private ActivityWebViewBinding binding;
-    private Handler handler = new Handler();
-    private WebView webview = null;
-    private String result = "";
-    private String detail = "";
+    WebView webview = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view);
 
-        // 디버깅 실정
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            WebView.setWebContentsDebuggingEnabled(true);
-        }
+        WebView.setWebContentsDebuggingEnabled(true);
 
-        // 바인딩 설정
-        binding = ActivityWebViewBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
-        // 웹뷰 설정
-        webview = binding.webview;
+        webview = findViewById(R.id.webview);
         webview.getSettings().setJavaScriptEnabled(true);
         webview.setWebViewClient(new WebViewClient());
-        webview.setWebChromeClient(new WebChromeClient());
+//        webview.setWebChromeClient(new WebChromeClient());
         webview.addJavascriptInterface(this, "alcherakyc");
 
         // 카메라 프리뷰 성능
         webview.clearCache(true);
         webview.clearHistory();
 
+        String url = "https://kyc.useb.co.kr/auth";
+        String param = createParam();
 
-        // 사용자 데이터 인코딩
-        String userInfo = null;
-        String encodedUserInfo = encodeJson(userInfo);
-
-        String url = getIntent().getStringExtra("url");
-        // POST
-        postUserInfo(url, encodedUserInfo);
-    }
-
-//    // WebView 액티비티에서 뒤로가기 버튼 막기
-//    @Override
-//    public void onBackPressed() {
-//        //super.onBackPressed();
-//    }
-
-    private void postUserInfo(String url, String encodedUserInfo) {
-
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-
-                // 카메라 권한 요청
-                cameraAuthRequest();
-                webview.loadUrl(url);
-                webview.setWebViewClient(new WebViewClient() {
-                    @Override
-                    public void onPageFinished(WebView view, String url) {
-
-                        webview.loadUrl("javascript:alcherakycreceive('" + encodedUserInfo + "')");
-                    }
-                });
-            }
+        Handler handler = new Handler();
+        handler.post(() -> {
+            cameraAuthRequest();
+            webview.loadUrl(url);
+            webview.setWebViewClient(new WebViewClient() {
+                @Override
+                public void onPageFinished(WebView view, String url) {
+                    webview.loadUrl("javascript:alcherakycreceive('" + param + "')");
+                }
+            });
         });
     }
 
-    private JSONObject getData() throws JSONException {
+    private String createParam() {
+        JSONObject paramObj = new JSONObject();
+        try {
+            paramObj.put("customer_id", "2");
+            paramObj.put("id", "demoUser");
+            paramObj.put("key", "demoUser0000!");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-        String birthday = getIntent().getStringExtra("birthday");
-        String name = getIntent().getStringExtra("name");
-        String phoneNumber = getIntent().getStringExtra("phoneNumber");
-        String email = getIntent().getStringExtra("email");
-        String isWasmOCRMode = getIntent().getBooleanExtra("wasmOcrMode", false) ? "true" : "false";
-        String isWasmSSAMode = getIntent().getBooleanExtra("wasmSsaMode", false) ? "true" : "false";
-
-        return dataToJson(birthday, name, phoneNumber, email, isWasmOCRMode, isWasmSSAMode);
+        return encodeJson(paramObj);
     }
 
-    private JSONObject dataToJson(String birthday, String name, String phoneNumber, String email, String isWasmOCRMode, String isWasmSSAMode) throws JSONException {
-
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("customer_id", "12");
-        jsonObject.put("id", "demoUser");
-        jsonObject.put("key", "demoUser0000!");
-        jsonObject.put("name", name);
-        jsonObject.put("birthday", birthday);
-        jsonObject.put("phone_number", phoneNumber);
-        jsonObject.put("email", email);
-        jsonObject.put("isWasmOCRMode", isWasmOCRMode);
-        jsonObject.put("isWasmSSAMode", isWasmSSAMode);
-
-        return jsonObject;
+    private String encodeJson(JSONObject data) {
+        String uriEncodedData = encodeURIComponent(data.toString());
+        return Base64.encodeToString(uriEncodedData.getBytes(), 0);
     }
 
     private String encodeURIComponent(String encoded) {
-
         String encodedURI = null;
         try {
             encodedURI = URLEncoder.encode(encoded, "UTF-8")
@@ -145,133 +97,16 @@ public class WebViewActivity extends AppCompatActivity {
         return encodedURI;
     }
 
-    private String encodeJson(String data) {
-
-        String encodedData = null;
-        try {
-            data = encodeURIComponent(getData().toString());
-            encodedData = Base64.encodeToString(data.getBytes(), 0);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return encodedData;
-    }
-
-    @JavascriptInterface
-    public void receive(String data) throws JSONException {
-        String decodedData = decodedReceiveData(data);
-        JSONObject JsonObject = new JSONObject(decodedData);
-        String resultData = "";
-
-        try {
-            JsonObject = ModifyReviewResult(JsonObject);
-            resultData = JsonObject.getString("result");
-        } catch (JSONException e) {
-            Log.e("JSONEXCEPTION", e.getMessage());
-            resultData = JsonObject.getString("result");
-        }
-
-        if (resultData.equals("success")) {
-            detail = JsonObject.toString(4);
-            result = "KYC 작업이 성공했습니다.";
-            Log.d("success", "KYC 작업이 성공했습니다.");
-        } else if (resultData.equals("failed")) {
-            detail = JsonObject.toString(4);
-            result = "KYC 작업이 실패했습니다.";
-            Log.d("failed", "KYC 작업이 실패했습니다.");
-        }
-
-        if (resultData.equals("complete")) {
-            detail = JsonObject.toString(4);
-            result = "KYC가 완료되었습니다.";
-            Log.d("complete", "KYC가 완료되었습니다.");
-        } else if (resultData.equals("close")) {
-            detail = JsonObject.toString(4);
-            result = "KYC가 완료되지 않았습니다.";
-            Log.d("close", "KYC가 완료되지 않았습니다.");
-        }
-
-        Intent intent = new Intent(getApplicationContext(), ReportActivity.class);
-        intent.putExtra("detail", detail);
-        intent.putExtra("result", result);
-        startActivity(intent);
-
-        finish();
-    }
-
-    private JSONObject ModifyReviewResult(JSONObject JsonObject) throws JSONException {
-
-        String reviewResult = JsonObject.getString("review_result");
-
-        JSONObject reviewResultJsonObject = new JSONObject(reviewResult);
-        String image = reviewResultJsonObject.getString("id_card");
-
-        JSONObject idCardJsonObject = new JSONObject(image);
-        String idCardImage = idCardJsonObject.getString("id_card_image");
-        String idCardOrigin = idCardJsonObject.getString("id_card_origin");
-        String idCropImage = idCardJsonObject.getString("id_crop_image");
-        if (idCardImage != "null") {
-            idCardImage = idCardImage.substring(0, 20) + "...생략(omit)...";
-            idCardJsonObject.put("id_card_image", idCardImage);
-        }
-        if (idCardOrigin != "null") {
-            idCardOrigin = idCardOrigin.substring(0, 20) + "...생략(omit)...";
-            idCardJsonObject.put("id_card_origin", idCardOrigin);
-        }
-        if (idCropImage != "null") {
-            idCropImage = idCropImage.substring(0, 20) + "...생략(omit)...";
-            idCardJsonObject.put("id_crop_image", idCropImage);
-        }
-        reviewResultJsonObject.put("id_card", idCardJsonObject);
-
-        String faceCheck = reviewResultJsonObject.getString("face_check");
-        JSONObject faceCheckObject = new JSONObject(faceCheck);
-        String faceImage = faceCheckObject.getString("selfie_image");
-        if (faceImage != "null") {
-            faceImage = faceImage.substring(0, 20) + "...생략(omit)...";
-            faceCheckObject.put("selfie_image", faceImage);
-        }
-        reviewResultJsonObject.put("face_check", faceCheckObject);
-        JsonObject.put("review_result", reviewResultJsonObject);
-
-        return JsonObject;
-    }
-
-    public String decodedReceiveData(String data) {
-
-        String decoded = new String(Base64.decode(data, 0));
-        return decodeURIComponent(decoded);
-    }
-
-    private String decodeURIComponent(String decoded) {
-
-        String decodedURI = null;
-        try {
-            decodedURI = URLDecoder.decode(decoded, "UTF-8")
-                    .replaceAll("%20", "\\+")
-                    .replaceAll("!", "\\%21")
-                    .replaceAll("'", "\\%27")
-                    .replaceAll("\\(", "\\%28")
-                    .replaceAll("\\)", "\\%29")
-                    .replaceAll("~", "\\%7E");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return decodedURI;
-    }
-
     private void cameraAuthRequest() {
-
-        webview = binding.webview;
+        webview = findViewById(R.id.webview);
         WebSettings ws = webview.getSettings();
         ws.setMediaPlaybackRequiresUserGesture(false);
 
         webview.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onPermissionRequest(final PermissionRequest request) {
-
                 //API레벨이 21이상인 경우
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     final String[] requestedResources = request.getResources();
                     for (String r : requestedResources) {
                         if (r.equals(PermissionRequest.RESOURCE_VIDEO_CAPTURE)) {
@@ -290,7 +125,6 @@ public class WebViewActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 1000) {
             if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
@@ -299,4 +133,48 @@ public class WebViewActivity extends AppCompatActivity {
             }
         }
     }
+
+    @JavascriptInterface
+    public void receive(String data) throws JSONException {
+        String decodedData = decodedReceiveData(data);
+        JSONObject jsonObject = new JSONObject(decodedData);
+        String resultData = jsonObject.getString("result");
+
+        if (resultData.equals("success")) {
+            Log.d("success", "KYC 작업이 성공했습니다.");
+        } else if (resultData.equals("failed")) {
+            Log.d("failed", "KYC 작업이 실패했습니다.");
+        }
+
+        if (resultData.equals("complete")) {
+            Log.d("complete", "KYC가 완료되었습니다.");
+        } else if (resultData.equals("close")) {
+            Log.d("close", "KYC가 완료되지 않았습니다.");
+        }
+
+        finish();
+    }
+
+    public String decodedReceiveData(String data) {
+        String decoded = new String(Base64.decode(data, 0));
+        return decodeURIComponent(decoded);
+    }
+
+    private String decodeURIComponent(String decoded) {
+        String decodedURI = null;
+        try {
+            decodedURI = URLDecoder.decode(decoded, "UTF-8")
+                    .replaceAll("%20", "\\+")
+                    .replaceAll("!", "\\%21")
+                    .replaceAll("'", "\\%27")
+                    .replaceAll("\\(", "\\%28")
+                    .replaceAll("\\)", "\\%29")
+                    .replaceAll("~", "\\%7E");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return decodedURI;
+    }
+
+
 }

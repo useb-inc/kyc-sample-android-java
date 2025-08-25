@@ -27,7 +27,7 @@ public class SplashActivity extends AppCompatActivity {
 
         @Override
         public void run() {
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            startActivity(new Intent(getApplicationContext(), WebViewActivity.class));
             SplashActivity.this.finish();
         }
     }
